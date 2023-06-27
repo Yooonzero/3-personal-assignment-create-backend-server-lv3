@@ -2,10 +2,10 @@
     "name": "3-personal-assignment-create-backend-server-lv3",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
+    "main": "app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon --watch 3-personal-assignment-create-backend-server-lv3/ 3-personal-assignment-create-backend-server-lv3/app.js"
+        "start": "nodemon --watch 5-personal-assignment-create-backend-server-lv3/ 5-personal-assignment-create-backend-server-lv3/app.js"
     },
     "keywords": [],
     "author": "",

@@ -7,7 +7,7 @@ module.exports = {
                 allowNull: false, // NOT NULL
                 autoIncrement: true, // AUTO_INCREMENT
                 primaryKey: true, // Primary Key (기본키)
-                type: Sequelize.INTEGER,
+                type: Sequelize.INTEGER, // 정수
             },
             email: {
                 allowNull: false, // NOT NULL
