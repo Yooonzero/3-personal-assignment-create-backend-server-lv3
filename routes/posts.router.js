@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Posts = require('../schemas/post.js');
+const Posts = require('../models/posts.js');
 const authMiddleware = require('../middlewares/auth-middleware.js');
 
 // 1. post(게시글) 생성
