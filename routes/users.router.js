@@ -1,11 +1,12 @@
 const express = require('express');
+const { Op } = require('sequelize');
 const router = express.Router();
 const Users = require('../models/users.js');
 const jwt = require('jsonwebtoken');
 
 // 회원가입 API
 router.post('/auth', async (req, res) => {
-    const { nickname, password, confirm } = req.body;
+    const { nickname, email, password, confirm } = req.body;
     try {
         const confirmedNickname = /^[a-zA-Z0-9]{3,}$/.test(nickname);
         if (!confirmedNickname) {
@@ -14,15 +15,13 @@ router.post('/auth', async (req, res) => {
             });
             return;
         }
-
+        console.log(nickname, email, password, confirm);
         // 닉네임 중복 확인
-        const existNickname = await Users.findOne({ nickname }); // Users 모델을 통해서 DB에 이미 입력한 nickname 값이 존재하는지 확인하고,
+        const existNickname = await Users.findOne({ where: { [Op.or]: [{ nickname }, { email }] } });
         if (existNickname) {
-            // 만약 있다면,
-            res.status(412).json({
-                errorMessage: '이미 존재하는 닉네임 입니다.', // 에러메시지를 출력하고,
+            return res.status(412).json({
+                errorMessage: '이미 존재하는 닉네임 입니다.',
             });
-            return; // 리턴시킨다.
         }
 
         //패스워드 길이 확인 : 4자이상
@@ -44,22 +43,20 @@ router.post('/auth', async (req, res) => {
 
         // 패스워드 확인
         if (password !== confirm) {
-            // body에 입력한 패스워드값과 확인값이 다르면,
-            //
             res.status(412).json({
-                errorMessage: '패스워드가 일치하지 않습니다.', // 해당 에러메시지를 출력하고,
+                errorMessage: '패스워드가 일치하지 않습니다.',
             });
-            return; // 리턴시킨다.
-            // 리턴이 없으면, 오류를 출력하고 아래로 내려가 회원가입이 이루어진다.
-            // 이유: Users에 키값에는 confirm이 없기 때문, 따라서 꼭, return을 넣어주어야 한다. 없으면 서버도 끊긴다.
+            return;
         }
 
         // 회원가입
-        const user = new Users({ nickname, password }); // body의 데이터를 담은 새로운 객체를 user에 할당하고,
-        await user.save(); // 저장한다.
+        const user = new Users({ nickname, email, password });
+        await user.save();
 
         res.status(201).json({ message: '회원가입을 축하드립니다.' });
     } catch (err) {
+        // console.log(err);
+        console.log(err.message);
         res.status(400).json({ errorMessage: '요청하신 데이터 형식이 올바르지 않습니다.' });
         return;
     }
