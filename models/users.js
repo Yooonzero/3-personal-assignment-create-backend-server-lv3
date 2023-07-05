@@ -11,17 +11,17 @@ module.exports = (sequelize, DataTypes) => {
             // define association here
 
             // 1. Users 모델에서
-            this.hasOne(models.UserInfos, {
-                // 2. UserInfos 모델에게 1:1 관계 설정을 합니다.
-                sourceKey: 'userId', // 3. Users 모델의 userId 컬럼을
-                foreignKey: 'UserId', // 4. UserInfos 모델의 UserId 컬럼과 연결합니다.
-            });
-
-            // 1. Users 모델에서
             this.hasMany(models.Posts, {
                 // 2. Posts 모델에게 1:N 관계 설정을 합니다.
                 sourceKey: 'userId', // 3. Users 모델의 userId 컬럼을
                 foreignKey: 'UserId', // 4. Posts 모델의 UserId 컬럼과 연결합니다.
+            });
+
+            // 1. Users 모델에서
+            this.hasMany(models.Comments, {
+                // 2. Comments 모델에게 1:N 관계 설정을 합니다.
+                sourceKey: 'userId', // 3. Users 모델의 userId 컬럼을
+                foreignKey: 'UserId', // 4. Comments 모델의 UserId 컬럼과 연결합니다.
             });
         }
     }
@@ -35,6 +35,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
             },
             email: {
+                allowNull: false, // NOT NULL
+                type: DataTypes.STRING,
+                unique: true,
+            },
+            nickname: {
                 allowNull: false, // NOT NULL
                 type: DataTypes.STRING,
                 unique: true,
@@ -61,22 +66,3 @@ module.exports = (sequelize, DataTypes) => {
     );
     return Users;
 };
-
-// nickname: {
-//     type: String,
-//     required: true,
-//     unique: true,
-// },
-// password: {
-//     type: String,
-//     required: true,
-// },
-// });
-
-// // 가상의 userId값 할당.
-// userSchema.virtual('userId').get(function () {
-// return this._id.toHexString();
-// });
-
-// // user의 정보를 JSON으로 변환할 때 vertual 값이 출력되도록 설정.
-// userSchema.set('toJSON', { virtuals: true });
