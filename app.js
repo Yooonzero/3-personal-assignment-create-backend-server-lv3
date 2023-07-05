@@ -6,8 +6,8 @@ const port = 3050;
 const cookieParser = require('cookie-parser');
 const indexRouter = require('./routes/index.js');
 
-const connect = require('./schemas'); //
-connect();
+// const connect = require('./schemas'); //
+// connect();
 
 app.use(express.json()); // req.body() 문법을 사용하기 위함이다.
 app.use(express.urlencoded({ extended: false })); // URL_encoded형식으로 전송된 데이터를 해석하여 req.body에 저장
