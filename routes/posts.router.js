@@ -87,8 +87,8 @@ router.put('/posts/:postId', authMiddleware, async (req, res) => {
     const { postId } = req.params;
     const { title, content } = req.body;
     const { userId } = res.locals.user;
+    const post = await Posts.findOne({ postId });
 
-    console.log(Object.values(req.params)); // [ '6493eabcc5f367206d23993d' ]
     try {
         if (Object.keys(req.body).length === 0 || Object.values(req.params).length === 0) {
             return res.status(412).json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
@@ -99,15 +99,18 @@ router.put('/posts/:postId', authMiddleware, async (req, res) => {
         if (content === '' || content === undefined) {
             return res.status(412).json({ errorMessage: '내용의 형식이 올바르지 않습니다.' });
         }
-        const post = await Posts.findOne({ _id: postId });
-        if (post.userId !== userId.toString()) {
+        if (post.UserId !== userId) {
             return res.status(412).json({ errorMessage: '게시글 수정권한이 없습니다.' });
         }
-        await Posts.updateOne({ _id: postId }, { $set: { title, content } }).catch((err) => {
+
+        // sequelize에서 정보 수정시 update 뒤에는 where라는 속성은 필수로 들어가야 한다.
+        await Posts.update({ title, content }, { where: { userId } }).catch((err) => {
+            console.log(err);
             res.status(401).json({ errorMessage: '게시글이 정상적으로 수정되지 않았습니다.' });
         });
         res.status(201).json({ message: '게시글을 성공적으로 수정하였습니다.' });
     } catch (error) {
+        console.log(error);
         console.log(error.message);
         res.status(400).json({ errorMessage: '게시글 수정에 실패하였습니다.' });
     }
