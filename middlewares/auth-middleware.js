@@ -1,4 +1,4 @@
-const User = require('../models/users.js');
+const { Users } = require('../models');
 const jwt = require('jsonwebtoken');
 
 module.exports = async (req, res, next) => {
@@ -24,14 +24,7 @@ module.exports = async (req, res, next) => {
         const { userId } = jwt.verify(authToken, 'customized-secret-key'); // 구조분해 할당으로 userId에 할당.
 
         //3. authToken에 있는 userId의 사용자가 실제로 DB에 존재하는지 확인.
-        const user = await User.findById(userId); // 해당 userId로 찾은 데이터를 user에 할당.
-        // console.log(user);
-        //{
-        //     _id: new ObjectId("649338b6c360e48dae75bdbc"),
-        //     nickname: 'test1',
-        //     password: '12',
-        //     __v: 0
-        //   }
+        const user = await Users.findOne({ userId }); // 해당 userId로 찾은 데이터를 user에 할당.
         res.locals.user = user; // res.locals.user를 사용할 수 있게, 현재 로그인된 user의 데이터를 할당한다.
 
         next(); // 이 다음의 미들웨어로 보낸다.
