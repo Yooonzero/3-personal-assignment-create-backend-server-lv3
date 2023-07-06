@@ -35,12 +35,15 @@ router.post('/posts', authMiddleware, async (req, res) => {
 router.get('/posts', async (req, res) => {
     try {
         // 생성날짜 기준으로 내림차순 정렬하고, posts에 할당.
-        const posts = await Posts.find().sort('-createdAt').exec();
+        const posts = await Posts.findAll({
+            order: [['createdAt', 'DESC']],
+        });
+
         const data = {
             posts: posts.map((a) => {
                 return {
-                    postId: a._id,
-                    userId: a.userId,
+                    postId: a.postId,
+                    UserId: a.UserId,
                     nickname: a.nickname,
                     title: a.title,
                     createdAt: a.createdAt,
@@ -58,12 +61,13 @@ router.get('/posts', async (req, res) => {
 // 3. post(게시글) 상세 조회
 router.get('/posts/:postId', async (req, res) => {
     const { postId } = req.params;
+
     try {
-        const post = await Posts.findById({ _id: postId }).exec();
+        const post = await Posts.findOne({ postId });
         const data = {
             post: {
-                postId: post._id,
-                userId: post.userId,
+                postId,
+                UserId: post.UserId,
                 nickname: post.nickname,
                 title: post.title,
                 content: post.content,
