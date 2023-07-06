@@ -10,9 +10,9 @@ const PORT = 3000;
 const app = express();
 
 // 서버 세팅
-app.use(express.json());
+app.use(express.json()); // express내장 함수
+app.use(express.urlencoded({ extended: true })); // express 내장 함수
 
-app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // npm i cookie-parser
 
 app.use('/', [usersRouter, postsRouter]);

@@ -1,11 +1,11 @@
 const express = require('express');
-const { Op } = require('sequelize');
 const router = express.Router();
-const Users = require('../models/users.js');
+const { Users } = require('../models');
 const jwt = require('jsonwebtoken');
 
 // 회원가입 API
 router.post('/auth', async (req, res) => {
+    console.log(Users);
     const { nickname, email, password, confirm } = req.body;
     try {
         const confirmedNickname = /^[a-zA-Z0-9]{3,}$/.test(nickname);
@@ -15,9 +15,9 @@ router.post('/auth', async (req, res) => {
             });
             return;
         }
-        console.log(nickname, email, password, confirm);
+
         // 닉네임 중복 확인
-        const existNickname = await Users.findOne({ where: { [Op.or]: [{ nickname }, { email }] } });
+        const existNickname = await Users.findOne({ where: { nickname } });
         if (existNickname) {
             return res.status(412).json({
                 errorMessage: '이미 존재하는 닉네임 입니다.',
@@ -55,7 +55,7 @@ router.post('/auth', async (req, res) => {
 
         res.status(201).json({ message: '회원가입을 축하드립니다.' });
     } catch (err) {
-        // console.log(err);
+        console.log(err);
         console.log(err.message);
         res.status(400).json({ errorMessage: '요청하신 데이터 형식이 올바르지 않습니다.' });
         return;
